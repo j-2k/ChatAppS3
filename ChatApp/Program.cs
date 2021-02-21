@@ -12,16 +12,75 @@ namespace ChatApp
     {
         static void Main(string[] args)
         {
-            //github > profile > SSH & GPG > Generate SSH key on google > copy command and change the email > enter command & find ssh > c drive > users > ssh > open public key copy everything inside > go to github > new ssh key paste ssh & give a name.
-            //edit the repo on the visual control aplication (fork/st) test SSH key from the website.
-            //git ignore + git repo 
-            //===
-            //to test this program open Cmder & enter the debug folder of this project & type the assemblyname.exe which here we set to "app"
-            //open 2 Cmder windows and do "app.exe -server" first to start up the server then on the other Cmder window do "app.exe -client"
             if (args.Length > 0)
             {
+                switch (args[0])
+                {
+                    case "-server":
+                        if (args.Length >=2)
+                        {
+                            int port = -1;
+                            bool portParsed = int.TryParse(args[1], out port);
+
+                            if (!portParsed)
+                            {
+                                throw new Exception("Argument 2 must be a port number. The given argument was not a number.");
+                            }
+                            Server server = new Server(port);
+                            server.Start();
+                        }
+                        else
+                        {
+                            throw new Exception("You are missing the 2nd argument. Please provide the port to connect to.");
+                        }
+                        break;
+
+                    case "-client":
+                        if (args.Length >= 3)
+                        {
+                            IPAddress ipConnect;
+                            bool ipParsed = IPAddress.TryParse(args[1], out ipConnect);
+                            if (!ipParsed)
+                                throw new Exception("Argument should be an IP Address. The given argument was not a IP Address/Invalid IP Address");
+
+                            int port = -1;
+                            bool portParsed = int.TryParse(args[2], out port);
+                            if (!portParsed)
+                            {
+                                throw new Exception("Argument 3 must be a port number. The given argument was not a number");
+                            }
+                            Client client = new Client(ipConnect, port);
+                            client.Start();
+                        }
+                        else
+                        {
+                            throw new Exception("Too many arguments. Order of arguments is as follows IP:Port (ex. 123.45.67.89:9876)");
+                        }
+                        break;
+                }
+
+
+
+                /*
                 if (args[0] == "-server")
                 {
+                    int port = 0;
+
+                    try
+                    {
+                        bool portParsed = int.TryParse(args[1], out port);
+
+                        if (!portParsed)
+                        {
+                            throw new Exception("Argument 3 must be a port number. The given argument was not a number");
+                        }
+                    }
+                    catch (Exception)
+                    {
+
+                        throw;
+                    }
+
                     //how to connect multiple clients 
                     List<Socket> clientSockets = new List<Socket>();
 
@@ -35,7 +94,15 @@ namespace ChatApp
 
                     //bind to the client
                     listeningSocket.Blocking = false;
-                    listeningSocket.Bind(new IPEndPoint(IPAddress.Any, 420));
+
+                    if (portParsed)
+                    {
+                        listeningSocket.Bind(new IPEndPoint(IPAddress.Any, port));
+                    }
+                    else
+                    {
+                        throw new Exception("Argument 3 must be a port number. The given argument was not a number");
+                    }
                     Console.WriteLine("Waiting For Connection...");
                     listeningSocket.Listen(10); //listen
 
@@ -95,7 +162,18 @@ namespace ChatApp
                 }
                 else if (args[0] == "-client")
                 {
+                    IPAddress ipAddress = args[1];
+                    bool ipParsed = IPAddress.TryParse(args[1], out ipAddress);
+                    if (!ipParsed)
+                        throw new Exception("Argument should be an IP Address. The given argument was not a IP Address");
 
+                    int port = 0;
+                    bool portParsed = int.TryParse(args[2], out port);
+
+                    if (!portParsed)
+                    {
+                        throw new Exception("Argument 3 must be a port number. The given argument was not a number");
+                    }
                     //Socket is responsible for the connection between the server & client
                     Socket socket;
 
@@ -107,7 +185,7 @@ namespace ChatApp
 
 
                     Console.WriteLine("Connecting To The Server...");
-                    socket.Connect(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 420));
+                    socket.Connect(new IPEndPoint(IPAddress.Parse(ipAddress), 420));
                     socket.Blocking = false;
                     Console.WriteLine("Connected To The Server!");
 
@@ -143,6 +221,8 @@ namespace ChatApp
                                 socket.Send(ASCIIEncoding.ASCII.GetBytes(stringToSend));
                                 //socket.Send(ASCIIEncoding.ASCII.GetBytes("Hello Server!"));
                                 */
+                                //
+                                /*
                             }
 
                             Byte[] recieveBuffer = new byte[1024];
@@ -160,7 +240,7 @@ namespace ChatApp
                             }
                         }
                     }
-                }
+                }*/
             }
             else
             {
