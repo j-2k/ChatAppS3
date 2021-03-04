@@ -11,19 +11,21 @@ namespace ChatApp
 {
     class Server //app.exe -server 420
     {
-        List<Socket> clientSockets = new List<Socket>();
+        List<Socket> clientSockets;
+        Dictionary<Socket, string> clientSocketNickname;
+        Socket listeningSocket;
         int port;
 
         public Server(int port)
         {
             this.port = port;
             clientSockets = new List<Socket>();
+            clientSocketNickname = new Dictionary<Socket, string>();
         }
 
         public void Start()
         {
             //Listening Socket
-            Socket listeningSocket;
             listeningSocket = new Socket(
                 AddressFamily.InterNetwork,         //IPV4
                 SocketType.Stream,                  //Type Stream-2way connection
@@ -41,7 +43,15 @@ namespace ChatApp
             {
                 try //keep trying to listen
                 {
-                    clientSockets.Add(listeningSocket.Accept());
+                    Socket clientSocket = listeningSocket.Accept();
+                    Byte[] recieveBuffer = new byte[1024];
+                    int receivedBytes = clientSocket.Receive(recieveBuffer);
+                    string nickname = ASCIIEncoding.ASCII.GetString(recieveBuffer);
+                    nickname = nickname.Substring(0, receivedBytes);
+                    Console.WriteLine(nickname + " has connected to the server!");
+
+                    clientSocketNickname.Add(clientSocket,nickname);
+                    clientSockets.Add(clientSocket);
                 }
                 catch (SocketException ex)
                 {
@@ -71,8 +81,25 @@ namespace ChatApp
                         if (ex.SocketErrorCode == SocketError.ConnectionAborted ||
                             ex.SocketErrorCode == SocketError.ConnectionReset)
                         {
+                            //SENDING TO SERVER
+                            Socket disconnectedSocket = clientSockets[i];
+                            string nickname = clientSocketNickname[disconnectedSocket];
+                            Console.WriteLine(nickname + " Disconnected!");
+
                             clientSockets[i].Close();
+                            clientSocketNickname.Remove(disconnectedSocket);
                             clientSockets.RemoveAt(i);
+
+                            //SENDING TO CLIENTS
+                            Packet disconnectedPacket = new Packet();
+                            disconnectedPacket.nickname = "Server";
+                            disconnectedPacket.message = nickname + " Disconnected!";
+                            disconnectedPacket.textColor = ConsoleColor.Red;
+
+                            for (int j = 0; j < clientSockets.Count; j++)
+                            {
+                                clientSockets[j].Send(BinaryFormatterClass.ObjectToByteArray(disconnectedPacket)); //??
+                            }
                         }
 
                         if (ex.SocketErrorCode != SocketError.WouldBlock)

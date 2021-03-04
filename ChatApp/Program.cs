@@ -37,7 +37,7 @@ namespace ChatApp
                         break;
 
                     case "-client":
-                        if (args.Length >= 3)
+                        if (args.Length >= 4)
                         {
                             IPAddress ipConnect;
                             bool ipParsed = IPAddress.TryParse(args[1], out ipConnect);
@@ -50,12 +50,18 @@ namespace ChatApp
                             {
                                 throw new Exception("Argument 3 must be a port number. The given argument was not a number");
                             }
-                            Client client = new Client(ipConnect, port);
+
+                            /*bool nickParsed = char.TryParse(args[3], out char c);
+                            if (!nickParsed)
+                            {
+                                throw new Exception("Argument 4 must be a nickname. Did you give a nickname?");
+                            }*/
+                            Client client = new Client(ipConnect, port, args[3]);
                             client.Start();
                         }
                         else
                         {
-                            throw new Exception("Order of arguments is as follows 'client IP Port' (ex. -client 123.45.67.89 9876)");
+                            throw new Exception("Order of arguments is as follows 'client IP Port' (ex. -client 123.45.67.89 9876 your_nickname)");
                         }
                         break;
                 }

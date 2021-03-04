@@ -13,11 +13,13 @@ namespace ChatApp
     {
         IPAddress ipToConnect;
         int portToConnect;
+        string nickname;
 
-        public Client(IPAddress ipC,int portC)
+        public Client(IPAddress ipC,int portC,string nicknameC)
         {
             this.ipToConnect = ipC;
             this.portToConnect = portC;
+            this.nickname = nicknameC;
         }
 
         public void Start()
@@ -25,6 +27,8 @@ namespace ChatApp
             //Socket is responsible for the connection between the server & client
             Socket socket;
             Packet packetSend = new Packet();
+
+            packetSend.nickname = nickname;
 
             socket = new Socket(
                 AddressFamily.InterNetwork,
@@ -39,8 +43,10 @@ namespace ChatApp
             Console.WriteLine("Connected To The Server!");
             socket.Blocking = false;
 
-            Console.WriteLine("Enter your nick name");
-            packetSend.nickname = Console.ReadLine();
+            socket.Send(ASCIIEncoding.ASCII.GetBytes(nickname));
+
+            /*Console.WriteLine("Enter your nick name");
+            packetSend.nickname = Console.ReadLine();*/
 
             int colorNumber = ChatColorsClass.PrintGetColorInfoFromUser();
             packetSend.textColor = ChatColorsClass.GetIndexOfColor(colorNumber);
