@@ -24,6 +24,7 @@ namespace ChatApp
         {
             //Socket is responsible for the connection between the server & client
             Socket socket;
+            Packet packetSend = new Packet();
 
             socket = new Socket(
                 AddressFamily.InterNetwork,
@@ -39,30 +40,44 @@ namespace ChatApp
             socket.Blocking = false;
 
             Console.WriteLine("Enter your nick name");
-            string nick = Console.ReadLine();
-            nick += ": ";
+            //string nick = Console.ReadLine();
+            //nick += ": ";
+            packetSend.nickname = Console.ReadLine();
 
             Console.WriteLine("Type your message...");
-            string stringToSend = "";
+            //string stringToSend = "";
+
             while (true)
             {
                 try
                 {
                     if (Console.KeyAvailable)
                     {
+                        Console.ForegroundColor = ConsoleColor.Yellow;
                         ConsoleKeyInfo key = Console.ReadKey();
 
                         if (key.Key == ConsoleKey.Enter)
                         {
-                            string message = nick + stringToSend;
+                            /*string message = nick + stringToSend;
                             socket.Send(ASCIIEncoding.ASCII.GetBytes(message));
                             Console.WriteLine(nick + stringToSend);
                             message = "";
-                            stringToSend = "";
+                            stringToSend = "";*/
                             //Console.WriteLine();
+
+                            //
+
+
+                            packetSend.message = packetSend.nickname + ": " + packetSend.message;
+                            socket.Send(BinaryFormatterClass.ObjectToByteArray(packetSend));
+                            Console.WriteLine(packetSend.message);
+                            packetSend.message = "";
+                            //Console.WriteLine();
+
                         }
                         else
                         {
+                            /*
                             if(key.Key == ConsoleKey.Backspace)
                             {
                                 if (stringToSend.Length >= 1)
@@ -75,6 +90,22 @@ namespace ChatApp
                             else
                             {
                                 stringToSend += key.KeyChar;
+                            }*/
+
+                            //
+
+                            if (key.Key == ConsoleKey.Backspace)
+                            {
+                                if (packetSend.message.Length >= 1)
+                                {
+                                    packetSend.message = packetSend.message.Remove(packetSend.message.Length - 1, 1);
+                                    Console.Write($"\r{new string(' ', (Console.WindowWidth - 1))}\r");
+                                    Console.Write($"\r{packetSend.message}");
+                                }
+                            }
+                            else
+                            {
+                                packetSend.message += key.KeyChar;
                             }
                         }
                     }
@@ -83,11 +114,18 @@ namespace ChatApp
 
                     Byte[] recieveBuffer = new byte[1024];
                     int receivedBytes = socket.Receive(recieveBuffer);
-                    string stringToPrint = ASCIIEncoding.ASCII.GetString(recieveBuffer);
-                    stringToPrint = stringToPrint.Substring(0, receivedBytes);
+
+                    //string stringToPrint = ASCIIEncoding.ASCII.GetString(recieveBuffer);
+                    //stringToPrint = stringToPrint.Substring(0, receivedBytes);
+
+                    Packet packetRecieve = (Packet)BinaryFormatterClass.ByteArrayToObject(recieveBuffer);
+
                     Console.Write($"\r{new string(' ',(Console.WindowWidth - 1))}\r");
-                    Console.WriteLine(stringToPrint);
-                    Console.WriteLine(stringToSend);
+                    //Console.WriteLine(stringToPrint);
+                    //Console.WriteLine(stringToSend);
+
+                    Console.WriteLine(packetRecieve.message);
+                    Console.WriteLine(packetSend.message);
                 }
                 catch (SocketException ex)
                 {
