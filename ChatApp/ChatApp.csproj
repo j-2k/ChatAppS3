@@ -59,6 +59,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BinaryFormatterClass.cs" />
+    <Compile Include="ChatColorsClass.cs" />
     <Compile Include="Client.cs" />
     <Compile Include="Packet.cs" />
     <Compile Include="Program.cs" />

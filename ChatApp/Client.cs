@@ -42,6 +42,9 @@ namespace ChatApp
             Console.WriteLine("Enter your nick name");
             packetSend.nickname = Console.ReadLine();
 
+            int colorNumber = ChatColorsClass.PrintGetColorInfoFromUser();
+            packetSend.textColor = ChatColorsClass.GetIndexOfColor(colorNumber);
+
             Console.WriteLine("Type your message...");
 
             while (true)
@@ -50,7 +53,7 @@ namespace ChatApp
                 {
                     if (Console.KeyAvailable)
                     {
-                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.ForegroundColor = packetSend.textColor;
                         ConsoleKeyInfo key = Console.ReadKey();
 
                         if (key.Key == ConsoleKey.Enter)
@@ -85,7 +88,11 @@ namespace ChatApp
                     Packet packetRecieve = (Packet)BinaryFormatterClass.ByteArrayToObject(recieveBuffer);
 
                     Console.Write($"\r{new string(' ',(Console.WindowWidth - 1))}\r");
+
+                    Console.ForegroundColor = packetRecieve.textColor;
                     Console.WriteLine(packetRecieve.message);
+
+                    Console.ForegroundColor = packetSend.textColor;
                     Console.WriteLine(packetSend.message);
                 }
                 catch (SocketException ex)

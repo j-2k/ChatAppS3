@@ -21,6 +21,7 @@ namespace ChatApp
             {
                 for (int i = 0; i < colorNames.Length; i++)                                             //print all the colors we have
                 {
+                    Console.ForegroundColor = GetIndexOfColor(i + 1);
                     Console.WriteLine((i + 1) + ": " + colorNames[i]);
                 }
 
@@ -33,7 +34,7 @@ namespace ChatApp
                 }
                 else                                                                                    //else tryparse has succeeded & we will need to do one more check 
                 {
-                    if (colorNumber < colorNames.Length - 1)                                            //we check if the color number is in the length of colors we provided at the top 
+                    if (colorNumber <= colorNames.Length)                                               //we check if the color number is in the length of colors we provided at the top 
                     {
                         return colorNumber;                                                             // if it  is within the length of colors we return the color number they chose
                     }
@@ -61,7 +62,7 @@ namespace ChatApp
                 case 5:
                     return ConsoleColor.White;
                 default:
-                    return ConsoleColor.Cyan;
+                    return ConsoleColor.White;
             }
         }
     }
