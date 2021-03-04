@@ -43,10 +43,11 @@ namespace ChatApp
             Console.WriteLine("Connected To The Server!");
             socket.Blocking = false;
 
-            socket.Send(ASCIIEncoding.ASCII.GetBytes(nickname));
-
             /*Console.WriteLine("Enter your nick name");
             packetSend.nickname = Console.ReadLine();*/
+
+            socket.Send(ASCIIEncoding.ASCII.GetBytes(nickname));
+
 
             int colorNumber = ChatColorsClass.PrintGetColorInfoFromUser();
             packetSend.textColor = ChatColorsClass.GetIndexOfColor(colorNumber);

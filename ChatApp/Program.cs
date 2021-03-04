@@ -51,11 +51,6 @@ namespace ChatApp
                                 throw new Exception("Argument 3 must be a port number. The given argument was not a number");
                             }
 
-                            /*bool nickParsed = char.TryParse(args[3], out char c);
-                            if (!nickParsed)
-                            {
-                                throw new Exception("Argument 4 must be a nickname. Did you give a nickname?");
-                            }*/
                             Client client = new Client(ipConnect, port, args[3]);
                             client.Start();
                         }
