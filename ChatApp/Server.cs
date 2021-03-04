@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ChatApp
 {
-    class Server
+    class Server //app.exe -server 420
     {
         List<Socket> clientSockets = new List<Socket>();
         int port;
@@ -26,7 +26,7 @@ namespace ChatApp
             Socket listeningSocket;
             listeningSocket = new Socket(
                 AddressFamily.InterNetwork,         //IPV4
-                SocketType.Stream,                  //Type Stream
+                SocketType.Stream,                  //Type Stream-2way connection
                 ProtocolType.Tcp                    //Protocol TCP
                 );
 

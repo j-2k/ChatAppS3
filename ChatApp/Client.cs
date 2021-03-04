@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ChatApp
 {
-    class Client
+    class Client //app.exe -client 127.0.0.1 420
     {
         IPAddress ipToConnect;
         int portToConnect;
@@ -55,23 +55,39 @@ namespace ChatApp
                         if (key.Key == ConsoleKey.Enter)
                         {
                             string message = nick + stringToSend;
-                            socket.Send(ASCIIEncoding.ASCII.GetBytes(stringToSend));
+                            socket.Send(ASCIIEncoding.ASCII.GetBytes(message));
+                            Console.WriteLine(nick + stringToSend);
                             message = "";
                             stringToSend = "";
-                            Console.WriteLine();
+                            //Console.WriteLine();
                         }
                         else
                         {
-                            stringToSend += key.KeyChar;
+                            if(key.Key == ConsoleKey.Backspace)
+                            {
+                                if (stringToSend.Length >= 1)
+                                {
+                                    stringToSend = stringToSend.Remove(stringToSend.Length - 1, 1);
+                                    Console.Write($"\r{new string(' ', (Console.WindowWidth - 1))}\r");
+                                    Console.Write($"\r{stringToSend}");
+                                }
+                            }
+                            else
+                            {
+                                stringToSend += key.KeyChar;
+                            }
                         }
                     }
 
-                    Byte[] recieveBuffer = new byte[1024];
-                    int received = socket.Receive(recieveBuffer);
-                    string stringToPrint = ASCIIEncoding.ASCII.GetString(recieveBuffer);
-                    stringToPrint = stringToPrint.Substring(0, received);
-                    Console.WriteLine(stringToPrint);
+                    //RECIEVING THE MESSAGE
 
+                    Byte[] recieveBuffer = new byte[1024];
+                    int receivedBytes = socket.Receive(recieveBuffer);
+                    string stringToPrint = ASCIIEncoding.ASCII.GetString(recieveBuffer);
+                    stringToPrint = stringToPrint.Substring(0, receivedBytes);
+                    Console.Write($"\r{new string(' ',(Console.WindowWidth - 1))}\r");
+                    Console.WriteLine(stringToPrint);
+                    Console.WriteLine(stringToSend);
                 }
                 catch (SocketException ex)
                 {
