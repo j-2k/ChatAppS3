@@ -40,12 +40,9 @@ namespace ChatApp
             socket.Blocking = false;
 
             Console.WriteLine("Enter your nick name");
-            //string nick = Console.ReadLine();
-            //nick += ": ";
             packetSend.nickname = Console.ReadLine();
 
             Console.WriteLine("Type your message...");
-            //string stringToSend = "";
 
             while (true)
             {
@@ -58,42 +55,13 @@ namespace ChatApp
 
                         if (key.Key == ConsoleKey.Enter)
                         {
-                            /*string message = nick + stringToSend;
-                            socket.Send(ASCIIEncoding.ASCII.GetBytes(message));
-                            Console.WriteLine(nick + stringToSend);
-                            message = "";
-                            stringToSend = "";*/
-                            //Console.WriteLine();
-
-                            //
-
-
                             packetSend.message = packetSend.nickname + ": " + packetSend.message;
                             socket.Send(BinaryFormatterClass.ObjectToByteArray(packetSend));
                             Console.WriteLine(packetSend.message);
                             packetSend.message = "";
-                            //Console.WriteLine();
-
                         }
                         else
                         {
-                            /*
-                            if(key.Key == ConsoleKey.Backspace)
-                            {
-                                if (stringToSend.Length >= 1)
-                                {
-                                    stringToSend = stringToSend.Remove(stringToSend.Length - 1, 1);
-                                    Console.Write($"\r{new string(' ', (Console.WindowWidth - 1))}\r");
-                                    Console.Write($"\r{stringToSend}");
-                                }
-                            }
-                            else
-                            {
-                                stringToSend += key.KeyChar;
-                            }*/
-
-                            //
-
                             if (key.Key == ConsoleKey.Backspace)
                             {
                                 if (packetSend.message.Length >= 1)
@@ -114,16 +82,9 @@ namespace ChatApp
 
                     Byte[] recieveBuffer = new byte[1024];
                     int receivedBytes = socket.Receive(recieveBuffer);
-
-                    //string stringToPrint = ASCIIEncoding.ASCII.GetString(recieveBuffer);
-                    //stringToPrint = stringToPrint.Substring(0, receivedBytes);
-
                     Packet packetRecieve = (Packet)BinaryFormatterClass.ByteArrayToObject(recieveBuffer);
 
                     Console.Write($"\r{new string(' ',(Console.WindowWidth - 1))}\r");
-                    //Console.WriteLine(stringToPrint);
-                    //Console.WriteLine(stringToSend);
-
                     Console.WriteLine(packetRecieve.message);
                     Console.WriteLine(packetSend.message);
                 }
